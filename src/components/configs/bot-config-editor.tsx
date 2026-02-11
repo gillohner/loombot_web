@@ -16,7 +16,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -90,7 +89,7 @@ export function BotConfigEditor({ config, isNew = false }: BotConfigEditorProps)
         });
       }
       router.push("/configs");
-    } catch (error) {
+    } catch {
       // Error handled by mutation
     }
   };

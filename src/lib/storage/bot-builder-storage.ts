@@ -101,7 +101,7 @@ export class BotBuilderStorage {
   }
 
   async saveServiceConfig(serviceConfig: ServiceConfig): Promise<void> {
-    const path = `pubky://${this.publicKey}${config.botBuilder.serviceConfigsPath}/${serviceConfig.id}.json`;
+    const path = `pubky://${this.publicKey}${config.botBuilder.serviceConfigsPath}/${serviceConfig.configId}.json`;
     await pubkyClient.write(this.session, path, serviceConfig);
   }
 

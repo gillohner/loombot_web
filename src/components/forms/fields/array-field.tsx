@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,7 +11,6 @@ import { getSchemaDefault } from "@/lib/services/service-loader";
 import { SchemaForm } from "../schema-form";
 
 interface ArrayFieldProps {
-  name: string;
   label: string;
   description?: string;
   itemSchema?: JSONSchema;
@@ -24,7 +23,6 @@ interface ArrayFieldProps {
 }
 
 export function ArrayField({
-  name,
   label,
   description,
   itemSchema,
@@ -35,7 +33,7 @@ export function ArrayField({
   minItems,
   maxItems,
 }: ArrayFieldProps) {
-  const items = value || [];
+  const items = useMemo(() => value || [], [value]);
 
   const handleAdd = useCallback(() => {
     if (maxItems !== undefined && items.length >= maxItems) return;

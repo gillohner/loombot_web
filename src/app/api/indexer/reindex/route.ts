@@ -1,11 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { indexer } from "@/lib/indexer";
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
-    // Optional: Add authentication/authorization check here
-    // For now, allow anyone to trigger a reindex
-
     const result = await indexer.reindexAll();
 
     return NextResponse.json({
@@ -27,7 +24,7 @@ export async function GET() {
     return NextResponse.json(stats);
   } catch (error) {
     console.error("Stats error:", error);
-    return NextResponse.json(
+    return NextResponse.json(§
       { message: "Failed to get stats" },
       { status: 500 }
     );

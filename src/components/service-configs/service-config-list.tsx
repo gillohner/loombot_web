@@ -88,7 +88,7 @@ export function ServiceConfigList({
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       {configs.map((config) => (
         <ServiceConfigCard
-          key={config.id}
+          key={config.configId}
           config={config}
           onDelete={onDelete}
           onCopyUri={onCopyUri}
@@ -117,6 +117,20 @@ function ServiceConfigCard({
 
   const KindIcon = kindIcon || Settings;
 
+  // Reconstruct GitHub URL from structured source
+  const getSourceUrl = () => {
+    if (config.source.type === "github") {
+      const base = `https://github.com/${config.source.location}`;
+      if (config.source.entry) {
+        const branch = config.source.version || "main";
+        return `${base}/tree/${branch}/${config.source.entry}`;
+      }
+      return base;
+    }
+    return undefined;
+  };
+  const sourceUrl = getSourceUrl();
+
   return (
     <Card className="hover:shadow-md transition-shadow">
       <CardHeader className="pb-2">
@@ -133,24 +147,26 @@ function ServiceConfigCard({
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem asChild>
-                <Link href={`/service-configs/${config.id}`}>
+                <Link href={`/service-configs/${config.configId}`}>
                   <Pencil className="h-4 w-4 mr-2" />
                   Edit
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => onCopyUri?.(config.id)}>
+              <DropdownMenuItem onClick={() => onCopyUri?.(config.configId)}>
                 <Copy className="h-4 w-4 mr-2" />
                 Copy URI
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <a href={config.source} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-2" />
-                  View Source
-                </a>
-              </DropdownMenuItem>
+              {sourceUrl && (
+                <DropdownMenuItem asChild>
+                  <a href={sourceUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink className="h-4 w-4 mr-2" />
+                    View Source
+                  </a>
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem
                 className="text-destructive"
-                onClick={() => onDelete?.(config.id)}
+                onClick={() => onDelete?.(config.configId)}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete

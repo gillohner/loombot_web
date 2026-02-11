@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import type { SearchQuery, SearchResult, IndexedEntity } from "@/types/indexer";
+import type { SearchQuery, SearchResult } from "@/types/indexer";
 
 async function searchEntities(query: SearchQuery): Promise<SearchResult> {
   const response = await fetch("/api/indexer/search", {

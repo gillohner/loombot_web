@@ -39,9 +39,8 @@ import { useServiceConfigs } from "@/hooks/use-service-configs";
 import { useServiceSchema } from "@/hooks/use-service-schema";
 import { useDatasets } from "@/hooks/use-datasets";
 import { SchemaForm } from "@/components/forms/schema-form";
-import { generateDefaultConfig } from "@/lib/services/service-loader";
+import { generateDefaultConfig, structuredSourceToGitUrl } from "@/lib/services/service-loader";
 import type { ServiceConfig } from "@/types/service-config";
-import type { DatasetSchemas } from "@/types/json-schema";
 
 // Preset core services available on GitHub
 const CORE_SERVICE_PRESETS = [
@@ -107,10 +106,15 @@ export function ServiceConfigEditor({
     {}
   );
 
+  // Convert structured source to string for form
+  const sourceString = config?.source
+    ? (typeof config.source === 'string' ? config.source : structuredSourceToGitUrl(config.source))
+    : "";
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      source: config?.source || "",
+      source: sourceString,
       command: config?.command || config?.manifest?.command || "",
       name: config?.name || "",
       description: config?.description || "",
@@ -257,7 +261,7 @@ export function ServiceConfigEditor({
         });
       } else if (config) {
         await update({
-          id: config.id,
+          id: config.configId,
           data: {
             source: data.source,
             command: data.command,

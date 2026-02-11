@@ -3,19 +3,23 @@ import type { JSONSchema, DatasetSchemas, ServiceKind } from "./json-schema";
 /**
  * Service Config - Primary reusable entity
  * Stored at /pub/bot_builder/service_configs/{id}.json
- * 
+ *
  * Matches the bot builder's PubkyServiceConfig interface
  */
 export interface ServiceConfig {
-  id: string;
+  configId: string; // Use configId to match bot builder
 
   // Service source info - structured for bot builder compatibility
-  source: string; // Git URL to the service (for UI display)
-  sourceVersion?: string; // Pinned version/commit
+  source: {
+    type: "github" | "jsr" | "local";
+    location: string; // GitHub repo URL, JSR package, or pubky:// path
+    entry?: string; // Entry point path within repo
+    version?: string; // Version/commit hash
+  };
 
   // Command to trigger this service (without leading /)
-  // Required for single_command and command_flow, optional for listeners
-  command?: string;
+  // Required by bot builder
+  command: string;
 
   // Kind of service (required by bot builder)
   kind: ServiceKind;
@@ -47,11 +51,11 @@ export interface ServiceConfig {
 
 /**
  * Form data for creating/editing a service config
+ * Uses string for source in the form, gets converted to structured format on save
  */
 export interface ServiceConfigFormData {
-  source: string;
-  sourceVersion?: string;
-  command?: string; // Required for commands, optional for listeners
+  source: string; // Git URL string, will be converted to structured format
+  command?: string; // Command override (optional, will use manifest command if not provided)
   name: string;
   description?: string;
   tags?: string[];

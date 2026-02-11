@@ -101,7 +101,6 @@ interface BotConfigCardProps {
 }
 
 function BotConfigCard({ config, onDelete }: BotConfigCardProps) {
-  const totalServices = config.services.length + config.listeners.length;
   const { getUri } = useBotConfigs();
   const configUri = getUri?.(config.configId);
   const setConfigCommand = configUri ? `/setconfig ${configUri}` : "";

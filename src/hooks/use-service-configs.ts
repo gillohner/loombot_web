@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/providers/auth-provider";
 import { BotBuilderStorage } from "@/lib/storage/bot-builder-storage";
 import type { ServiceConfig, ServiceConfigFormData, LoadedService } from "@/types/service-config";
+import { gitUrlToStructuredSource } from "@/lib/services/service-loader";
 import { toast } from "sonner";
 
 function generateId(): string {
@@ -36,11 +37,21 @@ export function useServiceConfigs() {
     }) => {
       if (!storage || !auth.publicKey) throw new Error("Not authenticated");
       const now = new Date().toISOString();
+
+      // Convert Git URL to structured source format for bot builder
+      const structuredSource = gitUrlToStructuredSource(data.source);
+
+      // Use command from form data, or fall back to manifest command
+      // Command is required by bot builder
+      const command = data.command || loadedService.manifest.command;
+      if (!command) {
+        throw new Error("Command is required for this service type");
+      }
+
       const config: ServiceConfig = {
-        id: generateId(),
-        source: data.source,
-        sourceVersion: data.sourceVersion,
-        command: data.command,
+        configId: generateId(),
+        source: structuredSource,
+        command,
         kind: loadedService.manifest.kind,
         name: data.name,
         description: data.description,
@@ -76,9 +87,19 @@ export function useServiceConfigs() {
       const existing = await storage.getServiceConfig(id);
       if (!existing) throw new Error("Service config not found");
 
+      // Build updates, converting source if provided
+      const { source, ...restData } = data;
+      const updates: Partial<ServiceConfig> = {
+        ...restData,
+      };
+
+      if (source) {
+        updates.source = gitUrlToStructuredSource(source);
+      }
+
       const updated: ServiceConfig = {
         ...existing,
-        ...data,
+        ...updates,
         updatedAt: new Date().toISOString(),
       };
       await storage.saveServiceConfig(updated);

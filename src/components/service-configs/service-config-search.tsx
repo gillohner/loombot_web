@@ -20,7 +20,6 @@ import {
   Radio,
   Command,
   Workflow,
-  Loader2,
 } from "lucide-react";
 import { useServiceConfigs } from "@/hooks/use-service-configs";
 import { useServiceConfigSearch } from "@/hooks/use-search";
@@ -139,14 +138,14 @@ export function ServiceConfigSearch({
             ) : (
               filteredMyConfigs.map((config) => (
                 <ServiceConfigItem
-                  key={config.id}
-                  id={config.id}
+                  key={config.configId}
+                  id={config.configId}
                   name={config.name}
                   description={config.description}
                   kind={config.manifest.kind}
                   command={config.manifest.command}
                   tags={config.tags}
-                  onSelect={() => handleSelect(config.id, config.name, true)}
+                  onSelect={() => handleSelect(config.configId, config.name, true)}
                 />
               ))
             )}

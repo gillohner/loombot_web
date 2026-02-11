@@ -1,5 +1,40 @@
-import type { LoadedService } from "@/types/service-config";
-import type { ServiceManifest, JSONSchema, DatasetSchemas } from "@/types/json-schema";
+import type { LoadedService, ServiceConfig } from "@/types/service-config";
+import type { JSONSchema } from "@/types/json-schema";
+
+/**
+ * Convert a Git URL string to structured source format for bot builder
+ */
+export function gitUrlToStructuredSource(gitUrl: string): ServiceConfig["source"] {
+  const parsed = parseGitUrl(gitUrl);
+  if (!parsed) {
+    throw new Error("Invalid Git URL");
+  }
+
+  const { provider, owner, repo, path, branch } = parsed;
+
+  return {
+    type: provider === "github" ? "github" : "local",
+    location: `${owner}/${repo}`,
+    entry: path || undefined,
+    version: branch !== "main" && branch !== "master" ? branch : undefined,
+  };
+}
+
+/**
+ * Convert structured source back to Git URL string for editing
+ */
+export function structuredSourceToGitUrl(source: ServiceConfig["source"]): string {
+  if (source.type === "github") {
+    const branch = source.version || "main";
+    const base = `https://github.com/${source.location}`;
+    if (source.entry) {
+      return `${base}/tree/${branch}/${source.entry}`;
+    }
+    return base;
+  }
+  // For other types, return a placeholder or the location
+  return source.location;
+}
 
 /**
  * Parse a git URL to extract repository info

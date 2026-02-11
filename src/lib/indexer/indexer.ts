@@ -5,11 +5,10 @@ import type {
   SearchQuery,
   SearchResult,
 } from "@/types/indexer";
-import { pubkyClient, PubkyClient } from "@/lib/pubky/client";
+import { pubkyClient } from "@/lib/pubky/client";
 import { config } from "@/lib/config";
 import type { ServiceConfig } from "@/types/service-config";
 import type { Dataset } from "@/types/dataset";
-import type { BotConfig } from "@/types/bot-config";
 import fs from "fs/promises";
 import path from "path";
 
@@ -133,7 +132,7 @@ export class Indexer {
             }
           }
         }
-      } catch (e) {
+      } catch {
         // No service configs
       }
 
@@ -160,7 +159,7 @@ export class Indexer {
             }
           }
         }
-      } catch (e) {
+      } catch {
         // No datasets
       }
 
