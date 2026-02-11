@@ -34,6 +34,11 @@ export class BotBuilderStorage {
         const configPath = file.startsWith('pubky://') ? file : `${basePath}/${file}`;
         const data = await pubkyClient.read<BotConfig>(configPath);
         if (data) {
+          // Ensure configId is populated (derive from filename if missing)
+          if (!data.configId) {
+            const filename = file.split('/').pop() ?? '';
+            data.configId = filename.replace(/\.json$/, '');
+          }
           configs.push(data);
         }
       }
@@ -81,6 +86,11 @@ export class BotBuilderStorage {
         const configPath = file.startsWith('pubky://') ? file : `${basePath}/${file}`;
         const data = await pubkyClient.read<ServiceConfig>(configPath);
         if (data) {
+          // Ensure configId is populated (derive from filename if missing)
+          if (!data.configId) {
+            const filename = file.split('/').pop() ?? '';
+            data.configId = filename.replace(/\.json$/, '');
+          }
           configs.push(data);
         }
       }

@@ -190,8 +190,8 @@ function ServiceConfigCard({
 
         {config.tags && config.tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
-            {config.tags.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="outline" className="text-xs">
+            {config.tags.slice(0, 3).map((tag, index) => (
+              <Badge key={`${tag}-${index}`} variant="outline" className="text-xs">
                 {tag}
               </Badge>
             ))}

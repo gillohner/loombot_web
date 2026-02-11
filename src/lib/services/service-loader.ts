@@ -15,7 +15,7 @@ export function gitUrlToStructuredSource(gitUrl: string): ServiceConfig["source"
   return {
     type: provider === "github" ? "github" : "local",
     location: `${owner}/${repo}`,
-    entry: path || undefined,
+    entry: path ? `./${path}/service.ts` : "./service.ts",
     version: branch !== "main" && branch !== "master" ? branch : undefined,
   };
 }
@@ -28,7 +28,13 @@ export function structuredSourceToGitUrl(source: ServiceConfig["source"]): strin
     const branch = source.version || "main";
     const base = `https://github.com/${source.location}`;
     if (source.entry) {
-      return `${base}/tree/${branch}/${source.entry}`;
+      // Strip ./prefix and /service.ts suffix to get the directory path for the URL
+      const dirPath = source.entry
+        .replace(/^\.\//, "")
+        .replace(/\/service\.ts$/, "");
+      if (dirPath) {
+        return `${base}/tree/${branch}/${dirPath}`;
+      }
     }
     return base;
   }

@@ -274,13 +274,20 @@ function parseManifestFromSource(source: string): ServiceManifest | null {
         serviceId = idMatch[2] || constants[idMatch[1]];
       }
 
-      // Extract kind
-      const kindMatch = serviceDefBlock.match(/kind:\s*["'](single_command|command_flow|listener)["']/);
-      kind = kindMatch?.[1] as typeof kind;
+      // Extract kind (string literal or constant reference)
+      const kindMatch = serviceDefBlock.match(/kind:\s*(?:["'](single_command|command_flow|listener)["']|([A-Z_]+))/);
+      if (kindMatch) {
+        const kindValue = kindMatch[1] || constants[kindMatch[2]];
+        if (kindValue === "single_command" || kindValue === "command_flow" || kindValue === "listener") {
+          kind = kindValue;
+        }
+      }
 
-      // Extract command
-      const commandMatch = serviceDefBlock.match(/command:\s*["']([^"']+)["']/);
-      command = commandMatch?.[1];
+      // Extract command (string literal or constant reference)
+      const commandMatch = serviceDefBlock.match(/command:\s*(?:["']([^"']+)["']|([A-Z_]+))/);
+      if (commandMatch) {
+        command = commandMatch[1] || constants[commandMatch[2]];
+      }
 
       // Extract description
       const descriptionMatch = serviceDefBlock.match(/description:\s*["']([^"']+)["']/);

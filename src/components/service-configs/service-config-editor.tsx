@@ -72,6 +72,13 @@ const CORE_SERVICE_PRESETS = [
     kind: "listener",
     url: "https://github.com/gillohner/pubky_bot_builder_telegram/tree/master/packages/core_services/new-member",
   },
+  {
+    id: "event-creator",
+    name: "Event Creator",
+    description: "Creates events on Pubky with admin approval, image uploads, and multi-calendar support",
+    kind: "command_flow",
+    url: "https://github.com/gillohner/pubky_bot_builder_telegram/tree/master/packages/core_services/event-creator",
+  },
 ] as const;
 
 const formSchema = z.object({

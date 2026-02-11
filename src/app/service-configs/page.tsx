@@ -121,9 +121,9 @@ export default function ServiceConfigsPage() {
                       <span className="text-xs bg-muted px-2 py-1 rounded">
                         {entity.kind}
                       </span>
-                      {entity.tags.slice(0, 2).map((tag) => (
+                      {entity.tags.slice(0, 2).map((tag, index) => (
                         <span
-                          key={tag}
+                          key={`${tag}-${index}`}
                           className="text-xs bg-muted px-2 py-1 rounded"
                         >
                           {tag}
