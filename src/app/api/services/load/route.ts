@@ -125,6 +125,47 @@ export async function POST(request: NextRequest) {
 }
 
 /**
+ * Remove JS comments while respecting string boundaries.
+ * Handles block comments, line comments, and avoids stripping :// inside strings.
+ */
+function removeComments(code: string): string {
+  let result = "";
+  let i = 0;
+  while (i < code.length) {
+    const ch = code[i];
+    // Handle quoted strings (single or double)
+    if (ch === '"' || ch === "'") {
+      const quote = ch;
+      result += code[i++];
+      while (i < code.length && code[i] !== quote) {
+        if (code[i] === "\\") {
+          result += code[i++]; // escape char
+        }
+        if (i < code.length) result += code[i++];
+      }
+      if (i < code.length) result += code[i++]; // closing quote
+    }
+    // Handle block comments /* ... */
+    else if (ch === "/" && i + 1 < code.length && code[i + 1] === "*") {
+      i += 2;
+      while (i + 1 < code.length && !(code[i] === "*" && code[i + 1] === "/")) {
+        i++;
+      }
+      i += 2; // skip */
+    }
+    // Handle line comments // ...
+    else if (ch === "/" && i + 1 < code.length && code[i + 1] === "/") {
+      while (i < code.length && code[i] !== "\n") i++;
+    }
+    // Regular character
+    else {
+      result += code[i++];
+    }
+  }
+  return result;
+}
+
+/**
  * Parse manifest information from TypeScript source
  * This is a simplified parser - in production you'd use a proper AST parser
  */
@@ -200,10 +241,9 @@ function parseManifestFromSource(source: string): ServiceManifest | null {
     const parseSchema = (name: string, schemaStr: string): unknown => {
       if (schemas[name]) return schemas[name];
 
-      // Remove comments
-      let cleanedStr = schemaStr
-        .replace(/\/\*[\s\S]*?\*\//g, "")
-        .replace(/\/\/.*/g, "");
+      // Remove comments while respecting string boundaries
+      // (naive regex `.replace(/\/\/.*/g, "")` breaks URLs like pubky:// inside strings)
+      let cleanedStr = removeComments(schemaStr);
 
       // Replace constant references with placeholder strings
       // Match only when the constant is used as a value (after : or [)
