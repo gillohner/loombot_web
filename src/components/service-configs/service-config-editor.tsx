@@ -104,7 +104,12 @@ export function ServiceConfigEditor({
   const { create, update, isCreating, isUpdating } = useServiceConfigs();
   const { create: createDataset, getUri: getDatasetUri } = useDatasets();
 
-  const [sourceUrl, setSourceUrl] = useState(config?.source || "");
+  // Convert structured source to string for form and schema loading
+  const sourceString = config?.source
+    ? (typeof config.source === 'string' ? config.source : structuredSourceToGitUrl(config.source))
+    : "";
+
+  const [sourceUrl, setSourceUrl] = useState(sourceString);
   const [isServiceLocked, setIsServiceLocked] = useState(!!config?.source);
   const [serviceConfig, setServiceConfig] = useState<Record<string, unknown>>(
     config?.config || {}
@@ -112,11 +117,6 @@ export function ServiceConfigEditor({
   const [datasetValues, setDatasetValues] = useState<Record<string, unknown>>(
     {}
   );
-
-  // Convert structured source to string for form
-  const sourceString = config?.source
-    ? (typeof config.source === 'string' ? config.source : structuredSourceToGitUrl(config.source))
-    : "";
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),

@@ -18,8 +18,8 @@ export interface ServiceConfig {
   };
 
   // Command to trigger this service (without leading /)
-  // Required by bot builder
-  command: string;
+  // Required for single_command and command_flow, optional for listeners
+  command?: string;
 
   // Kind of service (required by bot builder)
   kind: ServiceKind;

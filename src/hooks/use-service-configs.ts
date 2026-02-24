@@ -42,9 +42,9 @@ export function useServiceConfigs() {
       const structuredSource = gitUrlToStructuredSource(data.source);
 
       // Use command from form data, or fall back to manifest command
-      // Command is required by bot builder
+      // Command is required for single_command and command_flow, but not for listeners
       const command = data.command || loadedService.manifest.command;
-      if (!command) {
+      if (!command && loadedService.manifest.kind !== "listener") {
         throw new Error("Command is required for this service type");
       }
 
@@ -66,8 +66,9 @@ export function useServiceConfigs() {
       await storage.saveServiceConfig(config);
       return config;
     },
-    onSuccess: () => {
+    onSuccess: (config) => {
       queryClient.invalidateQueries({ queryKey: ["service-configs"] });
+      queryClient.removeQueries({ queryKey: ["service-config", config.configId] });
       toast.success("Service config created");
     },
     onError: (error) => {
@@ -105,8 +106,11 @@ export function useServiceConfigs() {
       await storage.saveServiceConfig(updated);
       return updated;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["service-configs"] });
+      // Remove cached individual query so the edit page does a fresh fetch
+      // (invalidate alone serves stale cache first, which initializes useState with old data)
+      queryClient.removeQueries({ queryKey: ["service-config", variables.id] });
       toast.success("Service config updated");
     },
     onError: (error) => {
@@ -119,8 +123,9 @@ export function useServiceConfigs() {
       if (!storage) throw new Error("Not authenticated");
       await storage.deleteServiceConfig(id);
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ["service-configs"] });
+      queryClient.removeQueries({ queryKey: ["service-config", id] });
       toast.success("Service config deleted");
     },
     onError: (error) => {

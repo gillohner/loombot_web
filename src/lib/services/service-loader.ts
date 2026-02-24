@@ -16,7 +16,7 @@ export function gitUrlToStructuredSource(gitUrl: string): ServiceConfig["source"
     type: provider === "github" ? "github" : "local",
     location: `${owner}/${repo}`,
     entry: path ? `./${path}/service.ts` : "./service.ts",
-    version: branch !== "main" && branch !== "master" ? branch : undefined,
+    version: branch,
   };
 }
 
