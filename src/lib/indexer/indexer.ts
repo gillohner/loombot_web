@@ -123,7 +123,7 @@ export class Indexer {
                 name: data.name,
                 description: data.description,
                 tags: data.tags || [],
-                source: data.source,
+                source: data.source?.location,
                 kind: data.manifest.kind,
                 indexedAt: new Date().toISOString(),
                 updatedAt: data.updatedAt,

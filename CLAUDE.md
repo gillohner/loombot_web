@@ -218,18 +218,19 @@ The **Pubky Bot Builder** (`../pubky_bot_builder_telegram/`) is the Deno-based T
 The `/api/services/load` route fetches raw TypeScript from GitHub, parses it to extract the service manifest:
 
 1. Fetches raw `.ts` file from GitHub (converts to `raw.githubusercontent.com` URL)
-2. Parses TypeScript using regex to find `defineService()` or `PubkyServiceSpec` object
-3. Extracts `serviceId`, `kind`, `command`, `configSchema`, `datasetSchemas`
+2. Parses TypeScript using brace-counting + regex to extract schema objects and `defineService()` calls
+3. Resolves constant references (e.g., `kind: SERVICE_KIND` → resolve from `const SERVICE_KIND = "command_flow"`)
+4. Resolves schema cross-references (e.g., `items: CALENDAR_OPTION_SCHEMA` → inline the parsed object)
+5. Extracts `serviceId`, `kind`, `command`, `configSchema`, `datasetSchemas`
 
-**Known issues:**
-- Parser must handle constant references (e.g., `kind: SERVICE_KIND` → resolve from `const SERVICE_KIND = "command_flow"`)
-- `items` in array schemas may not resolve constant references (e.g., `items: CALENDAR_OPTION_SCHEMA`) — the schema arrives without `items`, causing SchemaForm to render bare string arrays instead of object arrays
+**Comment removal:** The parser uses a string-aware `removeComments()` function that tracks quote boundaries. A naive `//` regex would break URLs like `pubky://` inside string literals — this was a past bug that caused schema parsing to silently fail.
 
 ## Important Patterns
 
 - **`configId` vs `serviceId`:** `configId` in stored configs is a randomly generated ID (e.g., `1719234567-abc1234`), NOT the service ID. `manifest.serviceId` comes from the source code.
 - **React Query cache:** `invalidateQueries` serves stale cache first then refetches in background. For forms that initialize from props via `useState`, use `removeQueries` instead to force fresh fetch + loading state.
-- **Calendar config format:** Web configurator stores calendars as `CalendarOption[]` objects (`{ uri, name, description, isDefault }`). The bot also handles plain URI strings for backwards compatibility.
+- **Calendar config format:** Web configurator stores calendars as `CalendarOption[]` objects (`{ uri, name, description, isDefault }`). The `name` field is required. The bot normalizes both object and plain URI string formats, and enriches missing names by fetching from the Pubky homeserver.
+- **Schema parser string safety:** The `removeComments()` function in `api/services/load/route.ts` must be used instead of naive regex for comment removal. It tracks single/double quote boundaries to avoid stripping `://` from URLs inside strings. Any changes to the parser must preserve this.
 
 ## Development Notes
 

@@ -353,24 +353,24 @@ function parseManifestFromSource(source: string): ServiceManifest | null {
     }
 
     // Get configSchema from schemas map
-    let configSchema = undefined;
+    let configSchema: ServiceManifest["configSchema"] = undefined;
     const configSchemaKey = Object.keys(schemas).find(
       (k) => k.endsWith("CONFIG_SCHEMA") && !k.includes("DATASET")
     );
     if (configSchemaKey) {
-      configSchema = schemas[configSchemaKey];
+      configSchema = schemas[configSchemaKey] as ServiceManifest["configSchema"];
       console.log('Found config schema:', configSchemaKey);
     } else {
       console.log('No config schema found. Available schemas:', Object.keys(schemas));
     }
 
     // Get datasetSchemas from schemas map (references already resolved)
-    let datasetSchemas = undefined;
+    let datasetSchemas: ServiceManifest["datasetSchemas"] = undefined;
     const datasetSchemasKey = Object.keys(schemas).find((k) =>
       k.endsWith("DATASET_SCHEMAS")
     );
     if (datasetSchemasKey) {
-      datasetSchemas = schemas[datasetSchemasKey];
+      datasetSchemas = schemas[datasetSchemasKey] as ServiceManifest["datasetSchemas"];
       console.log('Found dataset schemas:', datasetSchemasKey, datasetSchemas);
     }
 

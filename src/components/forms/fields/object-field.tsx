@@ -6,6 +6,7 @@ import { SchemaForm } from "../schema-form";
 import type { JSONSchema } from "@/types/json-schema";
 
 interface ObjectFieldProps {
+  name?: string;
   label: string;
   description?: string;
   schema: JSONSchema;

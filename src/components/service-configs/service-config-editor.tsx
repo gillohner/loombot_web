@@ -79,6 +79,27 @@ const CORE_SERVICE_PRESETS = [
     kind: "command_flow",
     url: "https://github.com/gillohner/pubky_bot_builder_telegram/tree/master/packages/core_services/event-creator",
   },
+  {
+    id: "help",
+    name: "Help",
+    description: "Configurable help message with command list",
+    kind: "single_command",
+    url: "https://github.com/gillohner/pubky_bot_builder_telegram/tree/master/packages/core_services/help",
+  },
+  {
+    id: "links",
+    name: "Links",
+    description: "Categorized links with inline keyboard navigation",
+    kind: "command_flow",
+    url: "https://github.com/gillohner/pubky_bot_builder_telegram/tree/master/packages/core_services/links",
+  },
+  {
+    id: "meetups",
+    name: "Meetups",
+    description: "Display upcoming events from Pubky calendars",
+    kind: "single_command",
+    url: "https://github.com/gillohner/pubky_bot_builder_telegram/tree/master/packages/core_services/meetups",
+  },
 ] as const;
 
 const formSchema = z.object({
@@ -171,7 +192,7 @@ export function ServiceConfigEditor({
         const loadDatasets = async () => {
           const initialDatasets: Record<string, unknown> = {};
 
-          for (const [name, def] of Object.entries(loadedService.manifest.datasetSchemas)) {
+          for (const [name, def] of Object.entries(loadedService.manifest.datasetSchemas!)) {
             // If editing and dataset URI exists, load it
             if (!isNew && config?.datasets?.[name]) {
               try {

@@ -11,6 +11,7 @@ import { getSchemaDefault } from "@/lib/services/service-loader";
 import { SchemaForm } from "../schema-form";
 
 interface ArrayFieldProps {
+  name?: string;
   label: string;
   description?: string;
   itemSchema?: JSONSchema;
