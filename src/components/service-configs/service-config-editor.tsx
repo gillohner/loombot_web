@@ -570,11 +570,17 @@ export function ServiceConfigEditor({
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <SchemaForm
-                      schema={def.schema}
-                      value={(datasetValues[name] as Record<string, unknown>) || {}}
-                      onChange={(value) => handleDatasetChange(name, value)}
-                    />
+                    {def.schema ? (
+                      <SchemaForm
+                        schema={def.schema}
+                        value={(datasetValues[name] as Record<string, unknown>) || {}}
+                        onChange={(value) => handleDatasetChange(name, value)}
+                      />
+                    ) : (
+                      <div className="text-muted-foreground text-sm">
+                        No schema available for this dataset. You can edit it as raw JSON.
+                      </div>
+                    )}
                   </CardContent>
                 </Card>
               )
