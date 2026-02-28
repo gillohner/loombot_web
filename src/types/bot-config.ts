@@ -31,6 +31,7 @@ export interface ServiceReference {
   };
   adminOnly?: boolean;
   enabled?: boolean; // Default: true
+  deleteCommandMessage?: boolean; // Delete user's command message after bot responds
 }
 
 /**

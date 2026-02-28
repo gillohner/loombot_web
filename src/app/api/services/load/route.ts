@@ -173,7 +173,7 @@ function parseManifestFromSource(source: string): ServiceManifest | null {
   try {
     // Build a map of constant values (strings)
     const constants: Record<string, string> = {};
-    const constantMatches = source.matchAll(/export const (\w+)\s*=\s*["']([^"']+)["']/g);
+    const constantMatches = source.matchAll(/(?:export )?const (\w+)\s*=\s*["']([^"']+)["']/g);
     for (const match of constantMatches) {
       constants[match[1]] = match[2];
     }
@@ -181,7 +181,7 @@ function parseManifestFromSource(source: string): ServiceManifest | null {
     // Build a map of schema constants (objects) - first pass
     // Use brace counting to properly extract nested objects
     const schemaStrings: Record<string, string> = {};
-    const schemaStartRegex = /export const (\w+(?:_SCHEMA|_SCHEMAS))[:\s]*(?:JSONSchema|DatasetSchemas)?\s*=\s*\{/g;
+    const schemaStartRegex = /(?:export )?const (\w+(?:_SCHEMA|_SCHEMAS))[:\s]*(?:JSONSchema|DatasetSchemas)?\s*=\s*\{/g;
 
     let match;
     while ((match = schemaStartRegex.exec(source)) !== null) {

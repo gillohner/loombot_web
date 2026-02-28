@@ -282,10 +282,10 @@ export function getSchemaDefault(schema: JSONSchema): unknown {
 /**
  * Generate config with defaults from schema
  */
-export function generateDefaultConfig(schema: JSONSchema): Record<string, unknown> {
+export function generateDefaultConfig(schema: JSONSchema | undefined): Record<string, unknown> {
   const config: Record<string, unknown> = {};
 
-  if (schema.type !== "object" || !schema.properties) {
+  if (!schema || schema.type !== "object" || !schema.properties) {
     return config;
   }
 

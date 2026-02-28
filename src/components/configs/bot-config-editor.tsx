@@ -139,6 +139,22 @@ export function BotConfigEditor({ config, isNew = false }: BotConfigEditorProps)
     }
   };
 
+  const handleToggleDeleteMessage = (
+    index: number,
+    deleteCommandMessage: boolean,
+    type: "service" | "listener"
+  ) => {
+    if (type === "service") {
+      const updated = [...services];
+      updated[index] = { ...updated[index], deleteCommandMessage };
+      setServices(updated);
+    } else {
+      const updated = [...listeners];
+      updated[index] = { ...updated[index], deleteCommandMessage };
+      setListeners(updated);
+    }
+  };
+
   const handleUpdateCommandOverride = (
     index: number,
     command: string | undefined,
@@ -242,6 +258,7 @@ export function BotConfigEditor({ config, isNew = false }: BotConfigEditorProps)
               references={services}
               onRemove={(i) => handleRemoveService(i, "service")}
               onToggle={(i, enabled) => handleToggleEnabled(i, enabled, "service")}
+              onToggleDelete={(i, del) => handleToggleDeleteMessage(i, del, "service")}
               onCommandOverride={(i, cmd) => handleUpdateCommandOverride(i, cmd, "service")}
             />
           </CardContent>
@@ -274,6 +291,7 @@ export function BotConfigEditor({ config, isNew = false }: BotConfigEditorProps)
               references={listeners}
               onRemove={(i) => handleRemoveService(i, "listener")}
               onToggle={(i, enabled) => handleToggleEnabled(i, enabled, "listener")}
+              onToggleDelete={(i, del) => handleToggleDeleteMessage(i, del, "listener")}
               onCommandOverride={(i, cmd) => handleUpdateCommandOverride(i, cmd, "listener")}
             />
           </CardContent>
@@ -318,6 +336,7 @@ interface ServiceReferenceListProps {
   references: ServiceReference[];
   onRemove: (index: number) => void;
   onToggle: (index: number, enabled: boolean) => void;
+  onToggleDelete: (index: number, deleteCommandMessage: boolean) => void;
   onCommandOverride: (index: number, command: string | undefined) => void;
 }
 
@@ -325,6 +344,7 @@ function ServiceReferenceList({
   references,
   onRemove,
   onToggle,
+  onToggleDelete,
   onCommandOverride,
 }: ServiceReferenceListProps) {
   if (references.length === 0) {
@@ -343,6 +363,7 @@ function ServiceReferenceList({
           reference={ref}
           onRemove={() => onRemove(index)}
           onToggle={(enabled) => onToggle(index, enabled)}
+          onToggleDelete={(del) => onToggleDelete(index, del)}
           onCommandOverride={(cmd) => onCommandOverride(index, cmd)}
         />
       ))}
@@ -354,6 +375,7 @@ interface ServiceReferenceItemProps {
   reference: ServiceReference;
   onRemove: () => void;
   onToggle: (enabled: boolean) => void;
+  onToggleDelete: (deleteCommandMessage: boolean) => void;
   onCommandOverride: (command: string | undefined) => void;
 }
 
@@ -361,6 +383,7 @@ function ServiceReferenceItem({
   reference,
   onRemove,
   onToggle,
+  onToggleDelete,
   onCommandOverride,
 }: ServiceReferenceItemProps) {
   const [serviceData, setServiceData] = useState<ServiceConfig | null>(null);
@@ -485,6 +508,14 @@ function ServiceReferenceItem({
                 <Badge variant="outline" className="text-xs">
                   {serviceData.kind || serviceData.manifest.kind}
                 </Badge>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <Switch
+                  checked={reference.deleteCommandMessage === true}
+                  onCheckedChange={onToggleDelete}
+                  className="scale-75"
+                />
+                <span className="text-xs text-muted-foreground">Delete command message</span>
               </div>
             </>
           ) : (
