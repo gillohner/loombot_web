@@ -162,7 +162,7 @@ export function ServiceConfigSearch({
                 message={
                   searchQuery
                     ? "No matching configs found in the network"
-                    : "Search to discover service configs"
+                    : "No service configs discovered yet"
                 }
               />
             ) : (

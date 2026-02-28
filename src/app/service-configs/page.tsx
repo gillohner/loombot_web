@@ -140,7 +140,7 @@ export default function ServiceConfigsPage() {
               <div className="text-center py-12 text-muted-foreground">
                 {searchQuery
                   ? "No matching configs found"
-                  : "Enter a search term to discover service configs"}
+                  : "No service configs discovered yet. Create and save a service config to make it discoverable."}
               </div>
             )}
           </TabsContent>

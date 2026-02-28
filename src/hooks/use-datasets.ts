@@ -4,6 +4,14 @@ import { BotBuilderStorage } from "@/lib/storage/bot-builder-storage";
 import type { Dataset, DatasetFormData } from "@/types/dataset";
 import { toast } from "sonner";
 
+function notifyIndexer(publicKey: string) {
+  fetch("/api/indexer/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ publicKey }),
+  }).catch(() => {});
+}
+
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -47,6 +55,7 @@ export function useDatasets() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset created");
     },
     onError: (error) => {
@@ -76,6 +85,7 @@ export function useDatasets() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset updated");
     },
     onError: (error) => {
@@ -90,6 +100,7 @@ export function useDatasets() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset deleted");
     },
     onError: (error) => {

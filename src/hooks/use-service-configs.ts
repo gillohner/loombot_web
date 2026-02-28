@@ -5,6 +5,14 @@ import type { ServiceConfig, ServiceConfigFormData, LoadedService } from "@/type
 import { gitUrlToStructuredSource } from "@/lib/services/service-loader";
 import { toast } from "sonner";
 
+function notifyIndexer(publicKey: string) {
+  fetch("/api/indexer/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ publicKey }),
+  }).catch(() => {});
+}
+
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -69,6 +77,7 @@ export function useServiceConfigs() {
     onSuccess: (config) => {
       queryClient.invalidateQueries({ queryKey: ["service-configs"] });
       queryClient.removeQueries({ queryKey: ["service-config", config.configId] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Service config created");
     },
     onError: (error) => {
@@ -111,6 +120,7 @@ export function useServiceConfigs() {
       // Remove cached individual query so the edit page does a fresh fetch
       // (invalidate alone serves stale cache first, which initializes useState with old data)
       queryClient.removeQueries({ queryKey: ["service-config", variables.id] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Service config updated");
     },
     onError: (error) => {
@@ -126,6 +136,7 @@ export function useServiceConfigs() {
     onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ["service-configs"] });
       queryClient.removeQueries({ queryKey: ["service-config", id] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Service config deleted");
     },
     onError: (error) => {

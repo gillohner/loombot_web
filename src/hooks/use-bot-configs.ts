@@ -4,6 +4,14 @@ import { BotBuilderStorage } from "@/lib/storage/bot-builder-storage";
 import type { BotConfig, BotConfigFormData } from "@/types/bot-config";
 import { toast } from "sonner";
 
+function notifyIndexer(publicKey: string) {
+  fetch("/api/indexer/register", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ publicKey }),
+  }).catch(() => {});
+}
+
 function generateId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 }
@@ -45,6 +53,7 @@ export function useBotConfigs() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bot-configs"] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Bot config created");
     },
     onError: (error) => {
@@ -68,6 +77,7 @@ export function useBotConfigs() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bot-configs"] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Bot config updated");
     },
     onError: (error) => {
@@ -82,6 +92,7 @@ export function useBotConfigs() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bot-configs"] });
+      if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Bot config deleted");
     },
     onError: (error) => {

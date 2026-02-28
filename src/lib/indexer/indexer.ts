@@ -25,14 +25,10 @@ export class Indexer {
     entities: [],
   };
 
-  private loaded = false;
-
   /**
    * Load state from disk
    */
   async load(): Promise<void> {
-    if (this.loaded) return;
-
     try {
       await fs.mkdir(DATA_DIR, { recursive: true });
 
@@ -52,7 +48,6 @@ export class Indexer {
         this.state.entities = [];
       }
 
-      this.loaded = true;
     } catch (error) {
       console.error("Failed to load indexer state:", error);
     }
@@ -168,6 +163,8 @@ export class Indexer {
       if (user) {
         user.lastIndexedAt = new Date().toISOString();
       }
+
+      await this.save();
     } catch (error) {
       console.error(`Failed to index user ${publicKey}:`, error);
     }
