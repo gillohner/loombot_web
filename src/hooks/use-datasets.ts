@@ -53,8 +53,9 @@ export function useDatasets() {
       await storage.saveDataset(dataset);
       return dataset;
     },
-    onSuccess: () => {
+    onSuccess: (dataset) => {
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.removeQueries({ queryKey: ["dataset", dataset.id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset created");
     },
@@ -83,8 +84,9 @@ export function useDatasets() {
       await storage.saveDataset(updated);
       return updated;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.removeQueries({ queryKey: ["dataset", variables.id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset updated");
     },
@@ -98,8 +100,9 @@ export function useDatasets() {
       if (!storage) throw new Error("Not authenticated");
       await storage.deleteDataset(id);
     },
-    onSuccess: () => {
+    onSuccess: (_data, id) => {
       queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.removeQueries({ queryKey: ["dataset", id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset deleted");
     },
