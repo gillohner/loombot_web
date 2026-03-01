@@ -155,10 +155,10 @@ export function ServiceConfigEditor({
     error: schemaError,
   } = useServiceSchema(sourceUrl);
 
-  // Compute effective config - use defaults if no config and schema exists
-  const effectiveConfig = loadedService?.manifest.configSchema &&
-    Object.keys(serviceConfig).length === 0
-    ? generateDefaultConfig(loadedService.manifest.configSchema)
+  // Compute effective config - always merge schema defaults under stored values
+  // so that fields missing from stored config get their schema defaults
+  const effectiveConfig = loadedService?.manifest.configSchema
+    ? { ...generateDefaultConfig(loadedService.manifest.configSchema), ...serviceConfig }
     : serviceConfig;
 
   // Auto-populate name from manifest and initialize config with defaults
