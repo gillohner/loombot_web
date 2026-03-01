@@ -44,6 +44,9 @@ export interface ServiceConfig {
   config: Record<string, unknown>;
   datasets?: Record<string, string>; // name → pubky:// URI to dataset
 
+  // Behavior
+  deleteCommandMessage?: boolean; // Delete user's trigger message after bot responds
+
   // Timestamps
   createdAt: string;
   updatedAt: string;
@@ -57,10 +60,9 @@ export interface ServiceConfigFormData {
   source: string; // Git URL string, will be converted to structured format
   command?: string; // Command override (optional, will use manifest command if not provided)
   name: string;
-  description?: string;
-  tags?: string[];
   config: Record<string, unknown>;
   datasets?: Record<string, string>;
+  deleteCommandMessage?: boolean;
 }
 
 /**

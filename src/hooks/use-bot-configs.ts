@@ -41,7 +41,6 @@ export function useBotConfigs() {
       const config: BotConfig = {
         configId: generateId(),
         name: data.name,
-        description: data.description,
         version: "1.0.0",
         createdAt: now,
         updatedAt: now,

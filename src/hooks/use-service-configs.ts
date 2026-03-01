@@ -62,12 +62,11 @@ export function useServiceConfigs() {
         command,
         kind: loadedService.manifest.kind,
         name: data.name,
-        description: data.description,
-        tags: data.tags,
         author: auth.publicKey,
         manifest: loadedService.manifest,
         config: data.config,
         datasets: data.datasets,
+        deleteCommandMessage: data.deleteCommandMessage,
         createdAt: now,
         updatedAt: now,
       };

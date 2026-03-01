@@ -7,7 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import {
   Card,
@@ -17,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -106,8 +106,6 @@ const formSchema = z.object({
   source: z.string().url("Must be a valid URL"),
   command: z.string().regex(/^[a-z0-9_]*$/, "Command must be lowercase letters, numbers, or underscores only").optional(),
   name: z.string().min(1, "Name is required"),
-  description: z.string().optional(),
-  tags: z.string().optional(),
 });
 
 type FormData = z.infer<typeof formSchema>;
@@ -138,6 +136,9 @@ export function ServiceConfigEditor({
   const [datasetValues, setDatasetValues] = useState<Record<string, unknown>>(
     {}
   );
+  const [deleteCommandMessage, setDeleteCommandMessage] = useState(
+    config?.deleteCommandMessage ?? false
+  );
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -145,8 +146,6 @@ export function ServiceConfigEditor({
       source: sourceString,
       command: config?.command || config?.manifest?.command || "",
       name: config?.name || "",
-      description: config?.description || "",
-      tags: config?.tags?.join(", ") || "",
     },
   });
 
@@ -245,11 +244,6 @@ export function ServiceConfigEditor({
       return;
     }
 
-    const tags = data.tags
-      ?.split(",")
-      .map((t) => t.trim())
-      .filter(Boolean);
-
     try {
       // Create datasets first and get their URIs
       const datasetUris: Record<string, string> = {};
@@ -280,10 +274,9 @@ export function ServiceConfigEditor({
             source: data.source,
             command: data.command,
             name: data.name,
-            description: data.description,
-            tags,
             config: effectiveConfig,
             datasets: datasetUris,
+            deleteCommandMessage: deleteCommandMessage || undefined,
           },
           loadedService,
         });
@@ -294,10 +287,9 @@ export function ServiceConfigEditor({
             source: data.source,
             command: data.command,
             name: data.name,
-            description: data.description,
-            tags,
             config: effectiveConfig,
             datasets: datasetUris,
+            deleteCommandMessage: deleteCommandMessage || undefined,
           },
         });
       }
@@ -493,24 +485,19 @@ export function ServiceConfigEditor({
               )}
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                {...form.register("description")}
-                placeholder="What does this service configuration do?"
-                rows={3}
+            <div className="flex items-center gap-3">
+              <Switch
+                id="deleteCommandMessage"
+                checked={deleteCommandMessage}
+                onCheckedChange={setDeleteCommandMessage}
               />
+              <Label htmlFor="deleteCommandMessage" className="cursor-pointer">
+                Delete trigger message
+              </Label>
             </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="tags">Tags (comma-separated)</Label>
-              <Input
-                id="tags"
-                {...form.register("tags")}
-                placeholder="privacy, links, cleaning"
-              />
-            </div>
+            <p className="text-xs text-muted-foreground">
+              Automatically delete the user&apos;s message after the bot responds
+            </p>
           </CardContent>
         </Card>
 
