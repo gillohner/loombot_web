@@ -116,8 +116,6 @@ export function useServiceConfigs() {
     },
     onSuccess: (_data, variables) => {
       queryClient.removeQueries({ queryKey: ["service-configs"] });
-      // Remove cached individual query so the edit page does a fresh fetch
-      // (invalidate alone serves stale cache first, which initializes useState with old data)
       queryClient.removeQueries({ queryKey: ["service-config", variables.id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Service config updated");

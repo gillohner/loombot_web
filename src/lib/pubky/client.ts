@@ -1,6 +1,31 @@
 import { Pubky, Client, Keypair, Session, PublicKey, type Address, type Path } from "@synonymdev/pubky";
 import { config, isTestnet } from "@/lib/config";
 
+// Bypass browser HTTP cache for homeserver reads.
+// The homeserver doesn't set Cache-Control: no-store, so browsers serve stale
+// cached GET responses (visible as 0ms in devtools). This interceptor forces
+// no-store for all .pubky.app requests so reads always hit the network.
+if (typeof globalThis !== "undefined" && typeof globalThis.fetch === "function") {
+  const _originalFetch = globalThis.fetch;
+  globalThis.fetch = function (
+    input: RequestInfo | URL,
+    init?: RequestInit,
+  ): Promise<Response> {
+    const url =
+      typeof input === "string"
+        ? input
+        : input instanceof URL
+          ? input.toString()
+          : input instanceof Request
+            ? input.url
+            : "";
+    if (url.includes(".pubky.app")) {
+      return _originalFetch(input, { ...init, cache: "no-store" });
+    }
+    return _originalFetch(input, init);
+  } as typeof fetch;
+}
+
 export class PubkyClient {
   private sdk: Pubky | null = null;
 
