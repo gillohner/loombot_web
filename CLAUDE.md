@@ -228,7 +228,7 @@ The `/api/services/load` route fetches raw TypeScript from GitHub, parses it to 
 ## Important Patterns
 
 - **`configId` vs `serviceId`:** `configId` in stored configs is a randomly generated ID (e.g., `1719234567-abc1234`), NOT the service ID. `manifest.serviceId` comes from the source code.
-- **React Query cache:** `invalidateQueries` serves stale cache first then refetches in background. For forms that initialize from props via `useState`, use `removeQueries` instead to force fresh fetch + loading state.
+- **React Query cache:** Caching is intentionally disabled (`staleTime: 0, gcTime: 0`). All mutations use `removeQueries` (not `invalidateQueries`) to ensure fresh homeserver reads. Do not add `staleTime` or other caching to queries.
 - **Calendar config format:** Web configurator stores calendars as `CalendarOption[]` objects (`{ uri, name, description, isDefault }`). The `name` field is required. The bot normalizes both object and plain URI string formats, and enriches missing names by fetching from the Pubky homeserver.
 - **Schema parser string safety:** The `removeComments()` function in `api/services/load/route.ts` must be used instead of naive regex for comment removal. It tracks single/double quote boundaries to avoid stripping `://` from URLs inside strings. Any changes to the parser must preserve this.
 

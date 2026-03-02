@@ -20,7 +20,6 @@ export function useSearch(query: SearchQuery, enabled = true) {
     queryKey: ["search", query],
     queryFn: () => searchEntities(query),
     enabled: enabled && (!!query.query || !!query.type || !!query.tags?.length),
-    staleTime: 30 * 1000, // 30 seconds
   });
 }
 

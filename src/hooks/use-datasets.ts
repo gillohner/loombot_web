@@ -54,7 +54,7 @@ export function useDatasets() {
       return dataset;
     },
     onSuccess: (dataset) => {
-      queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.removeQueries({ queryKey: ["datasets"] });
       queryClient.removeQueries({ queryKey: ["dataset", dataset.id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset created");
@@ -85,7 +85,7 @@ export function useDatasets() {
       return updated;
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.removeQueries({ queryKey: ["datasets"] });
       queryClient.removeQueries({ queryKey: ["dataset", variables.id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset updated");
@@ -101,7 +101,7 @@ export function useDatasets() {
       await storage.deleteDataset(id);
     },
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: ["datasets"] });
+      queryClient.removeQueries({ queryKey: ["datasets"] });
       queryClient.removeQueries({ queryKey: ["dataset", id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Dataset deleted");

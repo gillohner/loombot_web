@@ -51,7 +51,7 @@ export function useBotConfigs() {
       return config;
     },
     onSuccess: (config) => {
-      queryClient.invalidateQueries({ queryKey: ["bot-configs"] });
+      queryClient.removeQueries({ queryKey: ["bot-configs"] });
       queryClient.removeQueries({ queryKey: ["bot-config", config.configId] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Bot config created");
@@ -76,7 +76,7 @@ export function useBotConfigs() {
       return updated;
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["bot-configs"] });
+      queryClient.removeQueries({ queryKey: ["bot-configs"] });
       queryClient.removeQueries({ queryKey: ["bot-config", variables.id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Bot config updated");
@@ -92,7 +92,7 @@ export function useBotConfigs() {
       await storage.deleteConfig(id);
     },
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: ["bot-configs"] });
+      queryClient.removeQueries({ queryKey: ["bot-configs"] });
       queryClient.removeQueries({ queryKey: ["bot-config", id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Bot config deleted");

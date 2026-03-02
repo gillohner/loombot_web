@@ -74,7 +74,7 @@ export function useServiceConfigs() {
       return config;
     },
     onSuccess: (config) => {
-      queryClient.invalidateQueries({ queryKey: ["service-configs"] });
+      queryClient.removeQueries({ queryKey: ["service-configs"] });
       queryClient.removeQueries({ queryKey: ["service-config", config.configId] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Service config created");
@@ -115,7 +115,7 @@ export function useServiceConfigs() {
       return updated;
     },
     onSuccess: (_data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ["service-configs"] });
+      queryClient.removeQueries({ queryKey: ["service-configs"] });
       // Remove cached individual query so the edit page does a fresh fetch
       // (invalidate alone serves stale cache first, which initializes useState with old data)
       queryClient.removeQueries({ queryKey: ["service-config", variables.id] });
@@ -133,7 +133,7 @@ export function useServiceConfigs() {
       await storage.deleteServiceConfig(id);
     },
     onSuccess: (_data, id) => {
-      queryClient.invalidateQueries({ queryKey: ["service-configs"] });
+      queryClient.removeQueries({ queryKey: ["service-configs"] });
       queryClient.removeQueries({ queryKey: ["service-config", id] });
       if (auth.publicKey) notifyIndexer(auth.publicKey);
       toast.success("Service config deleted");

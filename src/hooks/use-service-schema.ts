@@ -10,7 +10,6 @@ export function useServiceSchema(gitUrl: string | undefined) {
       return loadServiceFromGit(gitUrl);
     },
     enabled: !!gitUrl && gitUrl.length > 0,
-    staleTime: 10 * 60 * 1000, // Cache for 10 minutes
     retry: 1,
   });
 }
