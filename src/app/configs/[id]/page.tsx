@@ -15,7 +15,7 @@ interface Props {
 export default function EditConfigPage({ params }: Props) {
   const { id } = use(params);
   const { isAuthenticated } = useAuth();
-  const { data: config, isLoading } = useBotConfig(id);
+  const { data: config, isLoading, dataUpdatedAt } = useBotConfig(id);
 
   if (!isAuthenticated) {
     redirect("/login");
@@ -36,7 +36,7 @@ export default function EditConfigPage({ params }: Props) {
   return (
     <AppLayout>
       <div className="p-6 max-w-4xl mx-auto">
-        <BotConfigEditor config={config} />
+        <BotConfigEditor key={dataUpdatedAt} config={config} />
       </div>
     </AppLayout>
   );

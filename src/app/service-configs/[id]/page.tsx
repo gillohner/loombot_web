@@ -15,7 +15,7 @@ interface Props {
 export default function EditServiceConfigPage({ params }: Props) {
   const { id } = use(params);
   const { isAuthenticated } = useAuth();
-  const { data: config, isLoading } = useServiceConfig(id);
+  const { data: config, isLoading, dataUpdatedAt } = useServiceConfig(id);
 
   if (!isAuthenticated) {
     redirect("/login");
@@ -36,7 +36,7 @@ export default function EditServiceConfigPage({ params }: Props) {
   return (
     <AppLayout>
       <div className="p-6 max-w-4xl mx-auto">
-        <ServiceConfigEditor config={config} />
+        <ServiceConfigEditor key={dataUpdatedAt} config={config} />
       </div>
     </AppLayout>
   );

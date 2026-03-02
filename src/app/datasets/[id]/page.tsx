@@ -15,7 +15,7 @@ interface Props {
 export default function EditDatasetPage({ params }: Props) {
   const { id } = use(params);
   const { isAuthenticated } = useAuth();
-  const { data: dataset, isLoading } = useDataset(id);
+  const { data: dataset, isLoading, dataUpdatedAt } = useDataset(id);
 
   if (!isAuthenticated) {
     redirect("/login");
@@ -36,7 +36,7 @@ export default function EditDatasetPage({ params }: Props) {
   return (
     <AppLayout>
       <div className="p-6 max-w-4xl mx-auto">
-        <DatasetEditor dataset={dataset} />
+        <DatasetEditor key={dataUpdatedAt} dataset={dataset} />
       </div>
     </AppLayout>
   );
